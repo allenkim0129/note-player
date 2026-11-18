@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <meta name="description" content="Photograph printed sheet music, review the recognized notes, and listen with piano, violin, or cello. Self-hosted optical music recognition.">
+  <title>Note Lens — Bring your sheet music to life</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script type="module" src="/static/app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Note Lens home"><span class="brand-icon">n<span>♪</span></span><span>note lens<span class="brand-dot">.</span></span></a>
+      <span class="sidebar-label">YOUR WORKSPACE</span>
+      <a href="#studio" class="nav-item active"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 3v4m8-4v4M8 12h8m-8 3h5"/></svg> Music studio <span>01</span></a>
+      <div class="sidebar-bottom">
+        <div class="little-note"><span>♬</span><p>A little practice.<br>A little possibility.</p></div>
+        <button class="text-button help-button" id="help-open"><span>ⓘ</span> How it works <span>↗</span></button>
+        <div class="version">MADE FOR MUSICAL MOMENTS</div>
+      </div>
+    </aside>
+
+    <main id="studio">
+      <header class="topbar"><span>Your personal music studio</span><span class="privacy-badge"><span></span> Your music, your space</span></header>
+      <section class="intro">
+        <div><div class="eyebrow"><span></span> SEE IT. HEAR IT. PLAY IT.</div><h1>Give your sheet music<br>a little <em>life.</em><svg class="flourish" viewBox="0 0 130 22" aria-hidden="true"><path d="M3 16Q52 0 123 9M12 21Q73 8 111 14"/></svg></h1><p>Turn a photo of your music into something you can hear.<br class="desktop-break"> Pick an instrument. Find your rhythm.</p></div>
+        <div class="hero-mark" aria-hidden="true"><svg viewBox="0 0 160 150"><path class="orbit" d="M18 88C-3 13 140 0 145 79S25 149 18 88Z"/><path class="music-mark" d="M72 105V40l47-10v64M72 59l47-10"/><ellipse cx="60" cy="106" rx="14" ry="9" transform="rotate(-20 60 106)"/><ellipse cx="107" cy="95" rx="14" ry="9" transform="rotate(-20 107 95)"/><path class="spark" d="M31 43v18m-9-9h18m91 61v14m-7-7h14"/></svg></div>
+      </section>
+
+      <div class="workflow"><span class="current"><b>1</b> Add your music</span><span class="step-line"></span><span id="step-recognize"><b>2</b> Read the notes</span><span class="step-line"></span><span id="step-play"><b>3</b> Make it play</span></div>
+      <div id="global-error" class="error-banner" role="alert" hidden></div>
+      <div class="studio-grid">
+        <section class="card capture-card" aria-labelledby="capture-title">
+          <div class="card-header"><div><span class="section-kicker">THE STARTING POINT</span><h2 id="capture-title">Your sheet music</h2></div><span class="step-tag">01 / CAPTURE</span></div>
+          <div class="photo-stage" id="photo-stage">
+            <div class="corner top-left"></div><div class="corner top-right"></div><div class="corner bottom-left"></div><div class="corner bottom-right"></div>
+            <div id="photo-empty" class="photo-empty">
+              <div class="paper-illustration" aria-hidden="true"><svg viewBox="0 0 160 170"><rect class="paper-shadow" x="30" y="12" width="106" height="140" rx="7" transform="rotate(10 83 82)"/><rect class="paper" x="19" y="8" width="106" height="140" rx="7" transform="rotate(-7 72 78)"/><g transform="rotate(-7 72 78)"><path class="staff" d="M35 44h73M35 51h73M35 58h73M35 65h73M35 72h73m-73 26h73m-73 7h73m-73 7h73m-73 7h73"/><path class="ink" d="M63 65V35m31 24V30M64 40l30-6M64 44l30-6M80 119V88"/><ellipse class="ink-fill" cx="58" cy="67" rx="6" ry="4" transform="rotate(-20 58 67)"/><ellipse class="ink-fill" cx="89" cy="61" rx="6" ry="4" transform="rotate(-20 89 61)"/><ellipse class="ink-fill" cx="75" cy="121" rx="6" ry="4" transform="rotate(-20 75 121)"/></g><circle cx="127" cy="129" r="22" class="camera-circle"/><path class="camera-icon" d="M116 123h6l2-4h7l2 4h6v15h-23zm16 7a5 5 0 1 0-10 0 5 5 0 0 0 10 0Z"/></svg></div>
+              <h3>A photo. A few notes. A new beginning.</h3><p>Snap a clear photo of printed sheet music<br>or choose one from your device.</p>
+              <span class="format-label">JPG, PNG OR WEBP · UP TO 15 MB</span>
+            </div>
+            <img id="photo-preview" alt="Your selected sheet music, ready for recognition" hidden>
+            <button id="replace-photo" class="replace-photo" hidden>↻ Change photo</button>
+            <div id="scan-overlay" class="scan-overlay" hidden><div class="scan-line"></div><span>Reading your music…</span></div>
+          </div>
+          <div class="capture-actions"><button class="button button-dark" id="camera-open"><svg viewBox="0 0 24 24"><path d="M3 7h5l2-3h4l2 3h5v13H3z"/><circle cx="12" cy="13" r="4"/></svg> Take a photo</button><button class="button button-light" id="upload-open"><svg viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg> Upload photo</button></div>
+          <input type="file" id="photo-file" accept="image/jpeg,image/png,image/webp" hidden>
+          <input type="file" id="camera-file" accept="image/*" capture="environment" hidden>
+          <div class="photo-tip"><span>☀</span><p>A little light goes a long way. Keep the page flat, straight, and fully in frame.</p></div>
+          <button class="button button-accent recognize-button" id="recognize" disabled><span id="recognize-label">Read the notes</span><span aria-hidden="true">→</span></button>
+          <p class="upload-disclosure">Only “Read the notes” sends your photo to this app’s server. No external recognition service. Photos are deleted after processing.</p>
+          <div class="sample-row"><span>Just looking around?</span><button class="text-button" id="try-sample">Try a sample sheet <span>↗</span></button></div>
+        </section>
+
+        <section class="card player-card" aria-labelledby="player-title">
+          <div class="card-header"><div><span class="section-kicker">FIND YOUR SOUND</span><h2 id="player-title">Make it yours</h2></div><span class="step-tag">02 / LISTEN</span></div>
+          <div class="field-label">Choose your instrument <span>SYNTHESIZED SOUNDS</span></div>
+          <div class="instruments" role="group" aria-label="Playback instrument">
+            <button class="instrument selected" data-instrument="piano" aria-pressed="true"><svg viewBox="0 0 48 48"><path d="M8 12h32v25H8zM16 12v25m8-25v25m8-25v25"/><path class="filled" d="M13 12h6v14h-6zm8 0h6v14h-6zm8 0h6v14h-6z"/></svg><strong>Piano</strong><span>Warm & familiar</span><i>✓</i></button>
+            <button class="instrument" data-instrument="violin" aria-pressed="false"><svg viewBox="0 0 48 48"><path d="m31 7 9 9M20 24 35 9l4 4-15 15m-4-4c-4-6-10-1-8 4-7 3-7 10-2 13s11 0 12-6c6 0 8-7 2-7m-12 8 8-8M8 8l31 31"/></svg><strong>Violin</strong><span>Bright & lyrical</span><i>✓</i></button>
+            <button class="instrument" data-instrument="cello" aria-pressed="false"><svg viewBox="0 0 48 48"><path d="M24 4v30m-3-30h6l-1 14c8 2 8 7 4 9 8 8 4 15-6 15S10 35 18 27c-4-2-4-7 4-9zm-4 30h8m-4 8v4M9 10l30 25"/></svg><strong>Cello</strong><span>Deep & mellow</span><i>✓</i></button>
+          </div>
+          <div class="now-playing">
+            <span class="tiny-label" id="score-label">A LITTLE QUIET, FOR NOW</span>
+            <h3 id="score-title">Your music belongs here.</h3>
+            <p id="score-subtitle">Add a photo and we’ll find the notes together.</p>
+            <div class="music-visual" aria-hidden="true"><svg viewBox="0 0 420 75" preserveAspectRatio="none"><path class="visual-staff" d="M0 18h420M0 28h420M0 38h420M0 48h420M0 58h420"/><g class="visual-notes"><path d="M73 47V10m67 27V0m67 47V10m67 17V0m67 47V10"/><ellipse cx="67" cy="48" rx="7" ry="5"/><ellipse cx="134" cy="38" rx="7" ry="5"/><ellipse cx="201" cy="48" rx="7" ry="5"/><ellipse cx="268" cy="28" rx="7" ry="5"/><ellipse cx="335" cy="48" rx="7" ry="5"/></g></svg><span id="active-note">♪</span></div>
+            <input id="seek" class="seek" type="range" min="0" max="1" step="0.05" value="0" aria-label="Playback position" disabled>
+            <div class="time-row"><span id="elapsed">0:00</span><span id="total-time">0:00</span></div>
+            <div class="transport"><button id="restart" class="icon-button" aria-label="Restart playback" disabled><svg viewBox="0 0 24 24"><path d="M5 5v14m14-14L7 12l12 7z"/></svg></button><button id="play" class="play-button" disabled><svg id="play-icon" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></svg><span id="play-label">Play notes</span></button><button id="stop" class="icon-button" aria-label="Stop playback" disabled><svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg></button></div>
+          </div>
+          <div class="play-settings"><div><label for="speed">Playback speed <output id="speed-value">1×</output></label><input id="speed" type="range" min="0.5" max="1.5" step="0.05" value="1"><div class="range-endpoints"><span>Slower</span><span>Faster</span></div></div><div><label for="volume">Volume <output id="volume-value">70%</output></label><input id="volume" type="range" min="0" max="100" step="1" value="70"><div class="range-endpoints"><span>Soft</span><span>Full</span></div></div></div>
+          <p class="listening-note"><span>♧</span> A practice companion, not a perfect performance.</p>
+        </section>
+      </div>
+
+      <section class="recognition-panel" id="recognition-panel" aria-labelledby="recognition-title">
+        <div class="recognition-heading"><div class="recognition-icon" aria-hidden="true">♮</div><div><h2 id="recognition-title">Every little mark matters.</h2><p id="recognition-description">Notes, rests, accidentals, rhythm — we read the details, not just the dots.</p></div><span class="outline-badge" id="engine-status">CHECKING RECOGNITION…</span></div>
+        <div id="recognition-progress" role="status" aria-live="polite"></div>
+        <div id="recognition-results" hidden>
+          <div id="score-stats" class="score-stats"></div>
+          <div class="review-warning"><strong>Recognized, not verified.</strong><p>Check these results against your sheet. A missed symbol may not appear in the warnings.</p><details open><summary id="warning-count">Recognition notes</summary><ul id="warnings"></ul></details></div>
+          <details class="detected-notes"><summary>Inspect detected notes <span id="notes-count"></span></summary><p>Each chip shows the pitch and its written duration in quarter-note beats. Chords share a start time. Tied notes are combined. Download MusicXML for the full score.</p><div id="note-list"></div></details>
+          <div class="review-actions"><label class="review-check"><input id="reviewed" type="checkbox"><span>I’ve reviewed the notes and understand recognition may be imperfect.</span></label><a id="download-xml" class="text-button" download="note-lens.musicxml">Download MusicXML ↗</a></div>
+        </div>
+      </section>
+      <footer><span class="footer-brand">note lens<span>.</span></span><span>A fresh way to hear what’s on the page.</span><button class="text-button" id="privacy-open">Privacy & limitations ↗</button></footer>
+    </main>
+  </div>
+
+  <dialog id="camera-dialog" aria-labelledby="camera-title"><div class="dialog-heading"><h2 id="camera-title">Find your frame</h2><button class="icon-button" id="camera-close" aria-label="Close camera">✕</button></div><p>Keep the whole page in frame, flat and evenly lit.</p><video id="camera-video" autoplay muted playsinline></video><p id="camera-status" role="status">Opening your camera…</p><div class="dialog-actions"><button class="button button-light" id="native-camera">Use phone camera instead</button><button class="button button-dark" id="camera-capture" disabled>Capture photo</button></div></dialog>
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">A page to a performance.</h2><button class="icon-button" id="help-close" aria-label="Close help">✕</button></div><ol><li><strong>Add a photo.</strong> Use the rear camera or upload a clear JPEG, PNG or WebP of printed staff notation. Include clefs, key signatures, and complete measures. Handwriting, tablature and very skewed photos are not reliable.</li><li><strong>Read and review.</strong> “Read the notes” uploads the photo only to the server hosting this app. Audiveris performs real optical recognition there. It can take up to three minutes per photo. Review the pitches, warnings and exported MusicXML; confidence percentages are not available.</li><li><strong>Choose your sound.</strong> Select piano, violin or cello, acknowledge the review, then press Play notes. Sound starts only after your tap. These are locally synthesized approximations, not recordings of real instruments.</li></ol><h3>What plays?</h3><p>Detected pitches, accidentals, rests, chords, multiple voices, written durations (including dots and tuplets), ties, simple repeats, tempo markings, dynamics, staccato, tenuto and accents. This depends on Audiveris recognizing the page correctly.</p><h3>What needs care?</h3><p>Grace notes, ornaments, pedal, fermatas, hairpins, ottava, playing techniques, alternate endings and D.C./D.S./coda navigation are not fully performed. Warnings describe detected unsupported symbols; an unrecognized symbol cannot always be flagged. No automatic perspective correction or manual score editor is included. Export MusicXML to correct the score in a notation editor.</p><h3>Your photo stays in your space.</h3><p>Camera preview and audio run in your browser. The photo is sent only after you press “Read the notes”, to this app’s server, not a third-party OMR API. Temporary photos and OMR files are deleted after processing (including failures). Results stay in server memory for up to 30 minutes and use an unguessable link. This app has no accounts: use a trusted private deployment for sensitive music. No analytics, external fonts or external audio downloads.</p><h3>Camera & sound</h3><p>Live camera needs HTTPS or localhost and your camera permission. If unavailable, use your phone’s native camera picker or Upload photo. Convert HEIC to JPEG if needed. If you cannot hear playback, raise device volume, check silent mode and tap Play again.</p></dialog>
+</body>
+</html>
